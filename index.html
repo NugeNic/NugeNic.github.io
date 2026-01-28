@@ -76,7 +76,7 @@
         }
 
         /* Theme Toggle */
-        .theme-toggle {
+        /*.theme-toggle {
             position: fixed;
             top: 30px;
             right: 30px;
@@ -94,12 +94,12 @@
             box-shadow: 0 10px 30px var(--shadow-glow);
             transition: all 0.3s;
             opacity: 0;
-        }
+        } 
 
         .theme-toggle:hover {
             transform: scale(1.1) rotate(15deg);
             box-shadow: 0 15px 40px var(--shadow-glow);
-        }
+        } */
 
         /* Loading Screen */
         .loader {
@@ -964,7 +964,7 @@
     </div>
 
     <!-- Theme Toggle -->
-    <button class="theme-toggle" id="themeToggle">🌓</button>
+    <!-- <button class="theme-toggle" id="themeToggle">🌓</button> -->
 
     <!-- Loader -->
     <div class="loader">
@@ -1227,9 +1227,9 @@
         });
 
         // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
+        //const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
-        
+        /*
         themeToggle.addEventListener('click', () => {
             const currentTheme = html.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -1242,7 +1242,7 @@
                 ease: 'back.out'
             });
         });
-
+        */
         // Initial Loading Animation
         const tl = gsap.timeline();
 
@@ -1272,12 +1272,12 @@
 
         function initAnimations() {
             // Theme toggle appear
-            gsap.to('.theme-toggle', {
+            /*gsap.to('.theme-toggle', {
                 opacity: 1,
                 duration: 1,
                 delay: 0.3,
                 ease: 'back.out(1.7)'
-            });
+            });*/
 
             // Header animation
             gsap.to('header', {
