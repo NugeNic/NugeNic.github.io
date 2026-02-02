@@ -620,11 +620,17 @@
         }
 
         .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 50px;
             max-width: 1300px;
             margin: 0 auto;
+            justify-content: center;
+        }
+
+        .feature-card {
+            flex: 1 1 320px;
+            max-width: 450px;
         }
 
         .feature-card {
@@ -1016,6 +1022,174 @@
             font-size: 1.1rem;
         }
 
+        /* Chat Popup */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 40px var(--shadow-glow);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 50px var(--shadow-glow);
+        }
+
+        .chat-button.hidden {
+            display: none;
+        }
+
+        .chat-popup {
+            position: fixed;
+            bottom: 120px;
+            right: 30px;
+            width: 420px;
+            max-height: 650px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--border-color);
+            z-index: 1001;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: bottom right;
+        }
+
+        .chat-popup.closed {
+            opacity: 0;
+            transform: scale(0);
+            pointer-events: none;
+        }
+
+        .chat-popup.open {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .chat-header {
+            background: var(--accent-gradient);
+            padding: 25px;
+            border-radius: 18px 18px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-content h4 {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .chat-header-content p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .chat-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .chat-body {
+            padding: 30px;
+            max-height: 520px;
+            overflow-y: auto;
+        }
+
+        .chat-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .chat-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .chat-form .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .chat-form .form-group input,
+        .chat-form .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .chat-form .form-group input:focus,
+        .chat-form .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 15px var(--shadow-glow);
+        }
+
+        .chat-form .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .chat-submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px var(--shadow-glow);
+        }
+
+        .chat-submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px var(--shadow-glow);
+        }
+
         /* Mobile Styles */
         @media (max-width: 1024px) {
             .contact-container {
@@ -1026,9 +1200,53 @@
             .project-grid {
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             }
+
+            .chat-popup {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                bottom: 100px;
+            }
         }
 
         @media (max-width: 768px) {
+            .features-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature-card {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .chat-button {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 1.8rem;
+            }
+
+            .chat-popup {
+                bottom: 90px;
+                max-height: calc(100vh - 120px);
+            }
+
+            .chat-popup.mobile-fullscreen {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                width: auto;
+                max-height: none;
+                border-radius: 15px;
+            }
+
+            .chat-body {
+                max-height: calc(100vh - 220px);
+            }
             .construction-icon {
                 font-size: 2rem;
             }
@@ -1493,7 +1711,7 @@
                         <div class="contact-detail-icon">📞</div>
                         <div class="contact-detail-label">Phone</div>
                         <div class="contact-detail-value">
-                            <a href="tel:+15551234567">(555) 123-4567</a>
+                            <a href="tel:+15125438433">(512) 543-8433</a>
                         </div>
                     </div>
                     
@@ -1501,13 +1719,57 @@
                         <div class="contact-detail-icon">📧</div>
                         <div class="contact-detail-label">Email</div>
                         <div class="contact-detail-value">
-                            <a href="mailto:info@steadfastglass.com">info@steadfastglass.com</a>
+                            <a href="NugeNic95@gmail.com">NugeNic95@gmail.com</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Chat Popup -->
+    <button class="chat-button" id="chatButton">💬</button>
+    
+    <div class="chat-popup closed" id="chatPopup">
+        <div class="chat-header">
+            <div class="chat-header-content">
+                <h4>Get a Free Estimate</h4>
+                <p>We'll respond quickly!</p>
+            </div>
+            <button class="chat-close-btn" id="chatCloseBtn">✕</button>
+        </div>
+        <div class="chat-body">
+            <form class="chat-form" id="chatForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="chatFirstName">First Name *</label>
+                        <input type="text" id="chatFirstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chatLastName">Last Name *</label>
+                        <input type="text" id="chatLastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chatEmail">Email *</label>
+                    <input type="email" id="chatEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chatPhone">Phone *</label>
+                    <input type="tel" id="chatPhone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chatMessage">Message *</label>
+                    <textarea id="chatMessage" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="chat-submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -1793,11 +2055,87 @@
                 'Message:\n' + formData.message
             );
             
-            window.location.href = 'mailto:info@steadfastglass.com?subject=' + subject + '&body=' + body;
+            window.location.href = 'mailto:NugeNic95@gmail.com?subject=' + subject + '&body=' + body;
             
             // Optionally show a success message
             alert('Thank you for your message! We will get back to you soon.');
             this.reset();
+        });
+
+        // Chat popup functionality
+        const chatButton = document.getElementById('chatButton');
+        const chatPopup = document.getElementById('chatPopup');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatForm = document.getElementById('chatForm');
+
+        // Check if desktop (width > 1024px) and auto-open chat
+        function checkDesktopAndOpenChat() {
+            if (window.innerWidth > 1024) {
+                setTimeout(() => {
+                    chatPopup.classList.remove('closed');
+                    chatPopup.classList.add('open');
+                }, 2000); // Open after 2 seconds on desktop
+            }
+        }
+
+        // Initial check
+        checkDesktopAndOpenChat();
+
+        // Recheck on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 1024) {
+                chatPopup.classList.remove('open');
+                chatPopup.classList.add('closed');
+            }
+        });
+
+        // Toggle chat popup
+        chatButton.addEventListener('click', () => {
+            if (chatPopup.classList.contains('closed')) {
+                chatPopup.classList.remove('closed');
+                chatPopup.classList.add('open');
+                chatButton.style.display = 'none';
+            }
+        });
+
+        // Close chat popup
+        chatCloseBtn.addEventListener('click', () => {
+            chatPopup.classList.remove('open');
+            chatPopup.classList.add('closed');
+            chatButton.style.display = 'flex';
+        });
+
+        // Chat form submission
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('chatFirstName').value,
+                lastName: document.getElementById('chatLastName').value,
+                email: document.getElementById('chatEmail').value,
+                phone: document.getElementById('chatPhone').value,
+                message: document.getElementById('chatMessage').value
+            };
+
+            const subject = encodeURIComponent('Chat Inquiry from ' + formData.firstName + ' ' + formData.lastName);
+            const body = encodeURIComponent(
+                'Name: ' + formData.firstName + ' ' + formData.lastName + '\n' +
+                'Email: ' + formData.email + '\n' +
+                'Phone: ' + formData.phone + '\n\n' +
+                'Message:\n' + formData.message
+            );
+            
+            window.location.href = 'mailto:NugeNic95@gmail.com?subject=' + subject + '&body=' + body;
+            
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+            
+            // Close chat after submission
+            setTimeout(() => {
+                chatPopup.classList.remove('open');
+                chatPopup.classList.add('closed');
+                chatButton.style.display = 'flex';
+            }, 1000);
         });
     </script>
 </body>
