@@ -770,7 +770,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 80px;
-            align-items: start;
+            align-items: stretch;
         }
 
         .contact-form-wrapper {
@@ -861,6 +861,7 @@
 
         .contact-info-wrapper {
             opacity: 0;
+            display: flex;
         }
 
         .contact-info {
@@ -869,6 +870,10 @@
             border-radius: 20px;
             border: 2px solid var(--border-color);
             text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .contact-info h3 {
@@ -1573,6 +1578,8 @@
                 <div class="contact-form">
                     <h3>Send Us a Message</h3>
                     <form id="contactForm">
+                        <!-- Honeypot: hidden from humans, bots fill it and get rejected -->
+                        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none !important;">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName">First Name *</label>
@@ -1642,6 +1649,8 @@
         </div>
         <div class="chat-body">
             <form class="chat-form" id="chatForm">
+                <!-- Honeypot: hidden from humans, bots fill it and get rejected -->
+                <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none !important;">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="chatFirstName">First Name *</label>
@@ -1708,21 +1717,21 @@
         tl.to('.loader-text', {
             opacity: 1,
             scale: 1.2,
-            duration: 1,
+            duration: 0.5,
             ease: 'elastic.out(1, 0.5)'
         })
         .to('.loader-progress', {
             width: '100%',
-            duration: 2,
+            duration: 0.8,
             ease: 'power2.inOut'
         })
         .to('.loader-text', {
             scale: 1,
-            duration: 0.3
+            duration: 0.2
         })
         .to('.loader', {
             opacity: 0,
-            duration: 0.5,
+            duration: 0.4,
             onComplete: () => {
                 document.querySelector('.loader').style.display = 'none';
                 initAnimations();
@@ -1908,11 +1917,63 @@
             });
         }
 
+        // ===== Web3Forms configuration =====
+        // 1. Go to https://web3forms.com, enter the email you want submissions sent to
+        //    (Nnugent@steadfastatx.com), and they will email you a free Access Key.
+        // 2. Paste that key between the quotes below. Until you do, the forms will
+        //    warn instead of silently failing.
+        const WEB3FORMS_ACCESS_KEY = '2334b375-fcd7-4c95-b947-b2432eb31087';
+
+        // Shared submit helper: POSTs the form to Web3Forms and reports the result.
+        async function sendToWeb3Forms(form, fields, subject) {
+            if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === 'YOUR-ACCESS-KEY-HERE') {
+                alert('This form is not connected yet. (Missing Web3Forms access key.)');
+                return false;
+            }
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalLabel = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+
+            const honeypot = form.querySelector('input[name="botcheck"]');
+            const payload = {
+                access_key: WEB3FORMS_ACCESS_KEY,
+                subject: subject,
+                from_name: 'Steadfast Website',
+                name: fields.firstName + ' ' + fields.lastName,
+                email: fields.email,
+                phone: fields.phone,
+                message: fields.message,
+                botcheck: honeypot ? honeypot.checked : false
+            };
+
+            try {
+                const res = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Thank you for your message! We will get back to you soon.');
+                    form.reset();
+                    return true;
+                }
+                alert('Sorry, something went wrong sending your message. Please call us or email Nnugent@steadfastatx.com.');
+                return false;
+            } catch (err) {
+                alert('Network error. Please check your connection or email us at Nnugent@steadfastatx.com.');
+                return false;
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+            }
+        }
+
         // Contact form submission
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const formData = {
+
+            const fields = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
                 email: document.getElementById('email').value,
@@ -1920,21 +1981,7 @@
                 message: document.getElementById('message').value
             };
 
-            // Here you would typically send the data to your backend
-            // For now, we'll create a mailto link
-            const subject = encodeURIComponent('Contact Form Submission from ' + formData.firstName + ' ' + formData.lastName);
-            const body = encodeURIComponent(
-                'Name: ' + formData.firstName + ' ' + formData.lastName + '\n' +
-                'Email: ' + formData.email + '\n' +
-                'Phone: ' + formData.phone + '\n\n' +
-                'Message:\n' + formData.message
-            );
-            
-            window.location.href = 'mailto:Nnugent@steadfastatx.com?subject=' + subject + '&body=' + body;
-            
-            // Optionally show a success message
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
+            sendToWeb3Forms(this, fields, 'Contact Form Submission from ' + fields.firstName + ' ' + fields.lastName);
         });
 
         // Chat popup functionality
@@ -1981,10 +2028,10 @@
         });
 
         // Chat form submission
-        chatForm.addEventListener('submit', function(e) {
+        chatForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const formData = {
+
+            const fields = {
                 firstName: document.getElementById('chatFirstName').value,
                 lastName: document.getElementById('chatLastName').value,
                 email: document.getElementById('chatEmail').value,
@@ -1992,25 +2039,16 @@
                 message: document.getElementById('chatMessage').value
             };
 
-            const subject = encodeURIComponent('Chat Inquiry from ' + formData.firstName + ' ' + formData.lastName);
-            const body = encodeURIComponent(
-                'Name: ' + formData.firstName + ' ' + formData.lastName + '\n' +
-                'Email: ' + formData.email + '\n' +
-                'Phone: ' + formData.phone + '\n\n' +
-                'Message:\n' + formData.message
-            );
-            
-            window.location.href = 'mailto:Nnugent@steadfastatx.com?subject=' + subject + '&body=' + body;
-            
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
-            
-            // Close chat after submission
-            setTimeout(() => {
-                chatPopup.classList.remove('open');
-                chatPopup.classList.add('closed');
-                chatButton.style.display = 'flex';
-            }, 1000);
+            const sent = await sendToWeb3Forms(this, fields, 'Chat Inquiry from ' + fields.firstName + ' ' + fields.lastName);
+
+            // Only close the chat once the message actually went through
+            if (sent) {
+                setTimeout(() => {
+                    chatPopup.classList.remove('open');
+                    chatPopup.classList.add('closed');
+                    chatButton.style.display = 'flex';
+                }, 1000);
+            }
         });
     </script>
 </body>
